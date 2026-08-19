@@ -1,0 +1,372 @@
+@import '@fontsource/space-grotesk/500.css';
+@import '@fontsource/space-grotesk/700.css';
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  background: #050505;
+}
+
+body {
+  overscroll-behavior: none;
+}
+
+#scroller {
+  height: 1200vh;
+  pointer-events: none;
+}
+
+.stage {
+  position: fixed;
+  inset: 0;
+}
+
+canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ---------- Overlay narrativo ---------- */
+.phase-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  padding: clamp(2rem, 6vw, 6rem);
+  color: #f4f7f4;
+  font-family: 'Space Grotesk', 'Sora', 'Manrope', sans-serif;
+}
+
+.phase-overlay.hero {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.phase-block {
+  animation: phase-in 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  max-width: 720px;
+}
+
+.phase-kicker {
+  font-size: 0.7rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: #42d879;
+  margin-bottom: 0.75rem;
+}
+
+.phase-title {
+  font-size: clamp(1.8rem, 4.5vw, 3.6rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  text-shadow: 0 0 40px rgba(66, 216, 121, 0.25);
+}
+
+.phase-overlay.hero .phase-title {
+  font-size: clamp(3rem, 9vw, 7.5rem);
+  letter-spacing: -0.03em;
+}
+
+.phase-subtitle {
+  margin-top: 0.9rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: clamp(0.95rem, 1.6vw, 1.25rem);
+  color: #a7b0aa;
+}
+
+@keyframes phase-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+    filter: blur(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phase-block {
+    animation: none;
+  }
+}
+
+/* ---------- Paneles glassmorphism ---------- */
+.content-panels {
+  position: fixed;
+  top: 50%;
+  right: clamp(1.5rem, 4vw, 4rem);
+  transform: translateY(-50%);
+  width: min(360px, 88vw);
+  z-index: 10;
+  pointer-events: none;
+  animation: panel-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.glass-panel {
+  pointer-events: auto;
+  background: rgba(244, 247, 244, 0.05);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border: 1px solid rgba(244, 247, 244, 0.12);
+  border-radius: 20px;
+  padding: 1.6rem 1.7rem;
+  color: #f4f7f4;
+  font-family: 'Space Grotesk', sans-serif;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+}
+
+.panel-title {
+  font-size: 0.78rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #42d879;
+  margin-bottom: 1.1rem;
+  font-weight: 500;
+}
+
+.service-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.service-item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.9rem;
+}
+
+.service-key {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #f4f7f4;
+  min-width: 7.2em;
+}
+
+.service-desc {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  color: #a7b0aa;
+}
+
+.stats-grid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.1rem;
+}
+
+.stat-value {
+  display: block;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #42d879;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  color: #a7b0aa;
+}
+
+.quote-hint {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  color: #a7b0aa;
+  margin-bottom: 1rem;
+}
+
+.glass-input {
+  width: 100%;
+  margin-bottom: 0.7rem;
+  padding: 0.8rem 1rem;
+  background: rgba(244, 247, 244, 0.06);
+  border: 1px solid rgba(244, 247, 244, 0.14);
+  border-radius: 12px;
+  color: #f4f7f4;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.glass-input:focus {
+  border-color: #42d879;
+}
+
+.glass-input::placeholder {
+  color: rgba(167, 176, 170, 0.7);
+}
+
+.cta-button {
+  display: inline-block;
+  margin-top: 0.4rem;
+  padding: 0.85rem 1.4rem;
+  background: #42d879;
+  color: #050505;
+  font-weight: 700;
+  font-size: 0.95rem;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 8px 30px rgba(66, 216, 121, 0.35);
+}
+
+.cta-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(66, 216, 121, 0.5);
+}
+
+.phase-hint {
+  margin-top: 1rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  color: rgba(167, 176, 170, 0.55);
+  text-align: right;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .content-panels {
+    top: auto;
+    bottom: 14vh;
+    right: 50%;
+    transform: translateX(50%);
+  }
+  .phase-hint {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .content-panels {
+    animation: none;
+  }
+}
+
+/* ---------- Accesibilidad ---------- */
+.skip-link {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 100;
+  padding: 0.7rem 1.2rem;
+  background: #42d879;
+  color: #050505;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  border-radius: 10px;
+  text-decoration: none;
+  transform: translateY(-200%);
+  transition: transform 0.2s;
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+:focus-visible {
+  outline: 2px solid #42d879;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.cta-button:focus-visible,
+.glass-input:focus-visible {
+  outline: 2px solid #42d879;
+  outline-offset: 3px;
+}
+
+/* ---------- Boot screen ---------- */
+.boot {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  background: #050505;
+  z-index: 50;
+  pointer-events: none;
+  animation: boot-out 0.6s ease 2.2s both;
+}
+
+.boot-logo {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(2.5rem, 7vw, 4.5rem);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: #42d879;
+  text-shadow: 0 0 60px rgba(66, 216, 121, 0.5);
+  animation: boot-pulse 1.6s ease-in-out infinite;
+}
+
+.boot-tag {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: #a7b0aa;
+}
+
+@keyframes boot-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@keyframes boot-out {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boot {
+    animation-duration: 0.01s;
+  }
+  .boot-logo {
+    animation: none;
+  }
+}
