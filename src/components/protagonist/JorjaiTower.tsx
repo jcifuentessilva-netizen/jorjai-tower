@@ -1,6 +1,6 @@
-import { useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
-import { useFrame } from '@react-three/fiber'
+import { useFrame, useLoader } from '@react-three/fiber'
 import { ContactShadows, Text } from '@react-three/drei'
 import OfficeInterior from '../interior/OfficeInterior'
 import CreativeStudio from '../interior/CreativeStudio'
@@ -25,6 +25,36 @@ export default function JorjaiTower() {
   const TOWER_H = FLOORS * FLOOR_H
   const WIDTH = 4.6
   const DEPTH = 3.4
+
+  /* ---------- fachada real: foto del edificio (cara frontal +z) ---------- */
+  const facadeImg = useLoader(THREE.TextureLoader, '/facade.jpg')
+
+  useEffect(() => {
+    // mantiene la proporción de la imagen (731x1280) sobre la cara 4.6x7.5
+    const texAspect = 731 / 1280
+    const faceAspect = WIDTH / TOWER_H
+    const rx = faceAspect / texAspect
+    // eslint-disable-next-line react/immutability -- mutación intencional de textura
+    facadeImg.colorSpace = THREE.SRGBColorSpace
+    facadeImg.repeat.set(rx, 1)
+    facadeImg.offset.set(-(rx - 1) / 2, 0)
+    facadeImg.needsUpdate = true
+    // eslint-disable-next-line react/immutability -- mutación intencional de textura Three.js
+  }, [facadeImg, WIDTH, TOWER_H])
+
+  const facadeMat = useMemo(
+    () =>
+      new THREE.MeshStandardMaterial({
+        map: facadeImg,
+        emissiveMap: facadeImg,
+        emissive: new THREE.Color('#ffffff'),
+        emissiveIntensity: isHermesTUI ? 0.15 : 0.3,
+        color: new THREE.Color('#8fa09a'), // atenúa el día para integrarse a la noche
+        roughness: 0.35,
+        metalness: 0.25,
+      }),
+    [facadeImg],
+  )
 
   /* vidrio de fachada: map = ventanas, emissiveMap = mismas ventanas */
   const glassMat = useMemo(
@@ -118,8 +148,12 @@ export default function JorjaiTower() {
         </mesh>
       ))}
 
-      {/* ---- Cuerpo de la torre (ventanas) ---- */}
-      <mesh position={[0, 1.1 + TOWER_H / 2, 0]} material={glassMat}>
+      {/* ---- Cuerpo de la torre (ventanas) ----
+           materiales por cara: [px,nx,py,ny,pz,nz] — frontal (+z) = foto real */}
+      <mesh
+        position={[0, 1.1 + TOWER_H / 2, 0]}
+        material={[glassMat, glassMat, glassMat, glassMat, facadeMat, glassMat]}
+      >
         <boxGeometry args={[WIDTH, TOWER_H, DEPTH]} />
       </mesh>
 
