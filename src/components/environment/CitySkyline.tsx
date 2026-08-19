@@ -57,25 +57,31 @@ export default function CitySkyline() {
 
   const coldMat = useMemo(
     () =>
-      new THREE.MeshStandardMaterial({
+      new THREE.MeshPhysicalMaterial({
         map: texture,
         emissiveMap: texture,
         emissive: new THREE.Color('#a8d8ff'),
         emissiveIntensity: isHermesTUI ? 0.35 : 0.6,
-        roughness: 0.4,
-        metalness: 0.3,
+        roughness: 0.35,
+        metalness: 0.25,
+        clearcoat: isHermesTUI ? 0.1 : 0.5,
+        clearcoatRoughness: 0.3,
+        envMapIntensity: 1.1,
       }),
     [texture],
   )
   const warmMat = useMemo(
     () =>
-      new THREE.MeshStandardMaterial({
+      new THREE.MeshPhysicalMaterial({
         map: texture,
         emissiveMap: texture,
         emissive: new THREE.Color('#ffcf9e'),
         emissiveIntensity: isHermesTUI ? 0.35 : 0.6,
-        roughness: 0.4,
-        metalness: 0.3,
+        roughness: 0.35,
+        metalness: 0.25,
+        clearcoat: isHermesTUI ? 0.1 : 0.5,
+        clearcoatRoughness: 0.3,
+        envMapIntensity: 1.1,
       }),
     [texture],
   )

@@ -2,14 +2,15 @@ import { useMemo } from 'react'
 import * as THREE from 'three'
 import { Text } from '@react-three/drei'
 import { createCodeTexture } from '../../lib/textures'
+import { metalMat, floorMat, leatherMat } from '../../lib/materials'
 
 const isHermesTUI = typeof __HERMES_TUI__ !== 'undefined' && __HERMES_TUI__
 
 /* ---------- estación de trabajo: mesa + monitor + silla ---------- */
 function Desk({ position, rotationY, screen }: { position: [number, number, number]; rotationY: number; screen: THREE.Texture }) {
-  const deskMat = useMemo(() => new THREE.MeshStandardMaterial({ color: '#222a26', roughness: 0.5, metalness: 0.6 }), [])
+  const deskMat = useMemo(() => metalMat('#222a26', 0.5), [])
   const darkMat = useMemo(() => new THREE.MeshStandardMaterial({ color: '#0c0f0e', roughness: 0.7 }), [])
-  const chairMat = useMemo(() => new THREE.MeshStandardMaterial({ color: '#141a17', roughness: 0.8 }), [])
+  const chairMat = useMemo(() => leatherMat('#141a17'), [])
   const screenMat = useMemo(
     () => new THREE.MeshBasicMaterial({ map: screen, toneMapped: false }),
     [screen],
@@ -86,14 +87,8 @@ export default function OfficeInterior() {
   const codeBlue = useMemo(() => createCodeTexture(13, '#6fd0ff', '#234f6b'), [])
   const codeWhite = useMemo(() => createCodeTexture(29, '#e8f2ec', '#5a6b62'), [])
 
-  const floorMat = useMemo(
-    () => new THREE.MeshStandardMaterial({ color: '#101613', roughness: 0.85 }),
-    [],
-  )
-  const receptionMat = useMemo(
-    () => new THREE.MeshStandardMaterial({ color: '#1a211d', roughness: 0.5, metalness: 0.5 }),
-    [],
-  )
+  const floorMat_ = useMemo(() => floorMat('#101613', 0.45), [])
+  const receptionMat = useMemo(() => metalMat('#1a211d', 0.5), [])
   const neonMat = useMemo(
     () =>
       new THREE.MeshStandardMaterial({
@@ -121,7 +116,7 @@ export default function OfficeInterior() {
       <pointLight position={[1.6, 4.55, 0]} intensity={isHermesTUI ? 1.5 : 3} distance={5} color="#ffe6c0" />
 
       {/* ---------- LOBBY ---------- */}
-      <mesh position={[0, 1.11, 0]} rotation={[-Math.PI / 2, 0, 0]} material={floorMat}>
+      <mesh position={[0, 1.11, 0]} rotation={[-Math.PI / 2, 0, 0]} material={floorMat_}>
         <planeGeometry args={[5.6, 4.4]} />
       </mesh>
       {/* mostrador de recepción */}
@@ -148,7 +143,7 @@ export default function OfficeInterior() {
       <Plant position={[-2.1, 1.11, 1.3]} />
 
       {/* ---------- OFICINAS (pisos 2-3) ---------- */}
-      <mesh position={[0, 2.37, 0]} rotation={[-Math.PI / 2, 0, 0]} material={floorMat}>
+      <mesh position={[0, 2.37, 0]} rotation={[-Math.PI / 2, 0, 0]} material={floorMat_}>
         <planeGeometry args={[5.2, 4]} />
       </mesh>
       {desks.map((d, i) => (

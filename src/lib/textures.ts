@@ -104,3 +104,35 @@ export function createGlowTexture(): THREE.CanvasTexture {
   tex.colorSpace = THREE.SRGBColorSpace
   return tex
 }
+
+/** Vetas de madera procedural (bump + color). */
+export function createWoodTexture(seed = 3): THREE.CanvasTexture {
+  const canvas = document.createElement('canvas')
+  canvas.width = 256
+  canvas.height = 256
+  const ctx = canvas.getContext('2d')!
+  ctx.fillStyle = '#6b4a2e'
+  ctx.fillRect(0, 0, 256, 256)
+
+  let s = seed >>> 0
+  const rand = () => {
+    s = (s * 16807) % 2147483647
+    return s / 2147483647
+  }
+  for (let y = 0; y < 256; y += 2 + rand() * 7) {
+    const shade = 75 + Math.floor(rand() * 35)
+    ctx.strokeStyle = `rgba(${shade}, ${shade * 0.7}, ${shade * 0.42}, ${0.25 + rand() * 0.35})`
+    ctx.lineWidth = 1 + rand() * 2
+    ctx.beginPath()
+    ctx.moveTo(0, y)
+    for (let x = 0; x <= 256; x += 32) {
+      ctx.lineTo(x, y + Math.sin(x * 0.05 + y * 0.3) * 3 + rand() * 2)
+    }
+    ctx.stroke()
+  }
+
+  const tex = new THREE.CanvasTexture(canvas)
+  tex.colorSpace = THREE.SRGBColorSpace
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping
+  return tex
+}

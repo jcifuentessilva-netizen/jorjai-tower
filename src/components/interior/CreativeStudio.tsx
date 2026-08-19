@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import * as THREE from 'three'
 import { Text } from '@react-three/drei'
-import { createGlowTexture } from '../../lib/textures'
+import { createGlowTexture, createWoodTexture } from '../../lib/textures'
+import { woodMat, concreteMat, leatherMat, glassMat, metalMat } from '../../lib/materials'
 
 const isHermesTUI = typeof __HERMES_TUI__ !== 'undefined' && __HERMES_TUI__
 
@@ -78,28 +79,12 @@ export default function CreativeStudio() {
     }
   }, [])
 
-  const woodMat = useMemo(
-    () => new THREE.MeshStandardMaterial({ color: '#3a2f26', roughness: 0.6, metalness: 0.1 }),
-    [],
-  )
-  const darkMat = useMemo(() => new THREE.MeshStandardMaterial({ color: '#101412', roughness: 0.7 }), [])
-  const cushionMat = useMemo(() => new THREE.MeshStandardMaterial({ color: '#1d2a23', roughness: 0.9 }), [])
-  const wallMat = useMemo(
-    () => new THREE.MeshStandardMaterial({ color: '#111714', roughness: 0.95 }),
-    [],
-  )
-  const glassWindow = useMemo(
-    () =>
-      new THREE.MeshPhysicalMaterial({
-        color: '#a8d8c8',
-        transmission: 0.9,
-        thickness: 0.3,
-        roughness: 0.06,
-        ior: 1.45,
-        clearcoat: 1,
-      }),
-    [],
-  )
+  const woodTex = useMemo(() => createWoodTexture(11), [])
+  const woodMat_ = useMemo(() => woodMat('#7a5636', woodTex), [woodTex])
+  const darkMat = useMemo(() => metalMat('#101412', 0.6), [])
+  const cushionMat = useMemo(() => leatherMat('#1d2a23'), [])
+  const wallMat = useMemo(() => concreteMat('#111714'), [])
+  const glassWindow = useMemo(() => glassMat({ transmission: 0.85, roughness: 0.06 }), [])
   const neonMat = useMemo(
     () =>
       new THREE.MeshStandardMaterial({
@@ -175,7 +160,7 @@ export default function CreativeStudio() {
       ))}
 
       {/* mesa de trabajo central */}
-      <mesh position={[0, 5.5, 0]} material={woodMat}>
+      <mesh position={[0, 5.5, 0]} material={woodMat_}>
         <boxGeometry args={[2.6, 0.06, 1.0]} />
       </mesh>
       <mesh position={[-1.2, 5.2, -0.4]} material={darkMat}>

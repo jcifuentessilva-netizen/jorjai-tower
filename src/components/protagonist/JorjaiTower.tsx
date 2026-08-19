@@ -5,6 +5,7 @@ import { ContactShadows, Text } from '@react-three/drei'
 import OfficeInterior from '../interior/OfficeInterior'
 import CreativeStudio from '../interior/CreativeStudio'
 import { createFacadeTexture } from '../../lib/textures'
+import { glassMat, metalMat } from '../../lib/materials'
 
 const isHermesTUI = typeof __HERMES_TUI__ !== 'undefined' && __HERMES_TUI__
 const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches
@@ -56,40 +57,21 @@ export default function JorjaiTower() {
     [facadeImg],
   )
 
-  /* vidrio de fachada: map = ventanas, emissiveMap = mismas ventanas */
-  const glassMat = useMemo(
+  /* vidrio de fachada: transmisión parcial (actividad visible) + ventanas */
+  const glassMat_ = useMemo(
     () =>
-      new THREE.MeshStandardMaterial({
+      glassMat({
         map: facadeTex,
         emissiveMap: facadeEmissive,
-        emissive: new THREE.Color('#ffe9c4'),
         emissiveIntensity: isHermesTUI ? 0.45 : 0.75,
-        roughness: 0.35,
-        metalness: 0.25,
-        side: THREE.DoubleSide, // visible desde dentro (inmersión oficinas)
+        transmission: 0.35,
       }),
     [facadeTex, facadeEmissive],
   )
 
-  const slabMat = useMemo(
-    () =>
-      new THREE.MeshStandardMaterial({
-        color: '#101714',
-        roughness: 0.6,
-        metalness: 0.5,
-      }),
-    [],
-  )
+  const slabMat = useMemo(() => metalMat('#101714', 0.55), [])
 
-  const frameMat = useMemo(
-    () =>
-      new THREE.MeshStandardMaterial({
-        color: '#1a2420',
-        roughness: 0.45,
-        metalness: 0.85,
-      }),
-    [],
-  )
+  const frameMat = useMemo(() => metalMat('#1a2420', 0.35), [])
 
   /* lobby: vidrio real con transmisión */
   const lobbyGlass = useMemo(
@@ -154,7 +136,7 @@ export default function JorjaiTower() {
            materiales por cara: [px,nx,py,ny,pz,nz] — frontal (+z) = foto real */}
       <mesh
         position={[0, 1.1 + TOWER_H / 2, 0]}
-        material={[glassMat, glassMat, glassMat, glassMat, facadeMat, glassMat]}
+        material={[glassMat_, glassMat_, glassMat_, glassMat_, facadeMat, glassMat_]}
         castShadow
       >
         <boxGeometry args={[WIDTH, TOWER_H, DEPTH]} />
