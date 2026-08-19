@@ -13,7 +13,7 @@ export default defineConfig({
     allowedHosts: true,
   },
   build: {
-    chunkSizeWarningLimit: 1100, // vendor-3d (three+drei) se carga lazy
+    chunkSizeWarningLimit: 1200, // vendor-3d (three+drei+postprocessing) se carga lazy
     rolldownOptions: {
       output: {
         codeSplitting: {

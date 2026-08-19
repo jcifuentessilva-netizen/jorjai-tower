@@ -131,7 +131,7 @@ export default function JorjaiTower() {
       <mesh position={[0, 0.55, 0]} material={lobbyGlass}>
         <boxGeometry args={[WIDTH + 1.2, 1.1, DEPTH + 1.2]} />
       </mesh>
-      <mesh position={[0, 0.55, 0]} material={frameMat}>
+      <mesh position={[0, 0.55, 0]} material={frameMat} castShadow receiveShadow>
         <boxGeometry args={[WIDTH + 1.4, 0.12, DEPTH + 1.4]} />
       </mesh>
       {/* luz interior del lobby */}
@@ -143,6 +143,8 @@ export default function JorjaiTower() {
           key={i}
           position={[0, 1.1 + i * FLOOR_H, 0]}
           material={slabMat}
+          castShadow
+          receiveShadow
         >
           <boxGeometry args={[WIDTH + 0.7, 0.1, DEPTH + 0.7]} />
         </mesh>
@@ -153,6 +155,7 @@ export default function JorjaiTower() {
       <mesh
         position={[0, 1.1 + TOWER_H / 2, 0]}
         material={[glassMat, glassMat, glassMat, glassMat, facadeMat, glassMat]}
+        castShadow
       >
         <boxGeometry args={[WIDTH, TOWER_H, DEPTH]} />
       </mesh>
@@ -164,13 +167,13 @@ export default function JorjaiTower() {
         [-WIDTH / 2 - 0.18, -DEPTH / 2 - 0.18],
         [WIDTH / 2 + 0.18, -DEPTH / 2 - 0.18],
       ].map(([x, z], i) => (
-        <mesh key={i} position={[x, 1.1 + TOWER_H / 2, z]} material={frameMat}>
+        <mesh key={i} position={[x, 1.1 + TOWER_H / 2, z]} material={frameMat} castShadow>
           <boxGeometry args={[0.24, TOWER_H, 0.24]} />
         </mesh>
       ))}
 
       {/* ---- Rooftop: helipuerto + antena + logo ---- */}
-      <mesh position={[0, 1.1 + TOWER_H + 0.06, 0]} rotation={[-Math.PI / 2, 0, 0]} material={slabMat}>
+      <mesh position={[0, 1.1 + TOWER_H + 0.06, 0]} rotation={[-Math.PI / 2, 0, 0]} material={slabMat} castShadow receiveShadow>
         <cylinderGeometry args={[1.5, 1.5, 0.06, 32]} />
       </mesh>
       <mesh position={[0, 1.1 + TOWER_H + 0.1, 0]} rotation={[-Math.PI / 2, 0, 0]} material={neon}>

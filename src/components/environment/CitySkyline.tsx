@@ -101,10 +101,10 @@ export default function CitySkyline() {
 
   return (
     <group>
-      <instancedMesh ref={coldRef} args={[undefined, undefined, cold.length]} material={coldMat}>
+      <instancedMesh ref={coldRef} args={[undefined, undefined, cold.length]} material={coldMat} castShadow receiveShadow>
         <boxGeometry />
       </instancedMesh>
-      <instancedMesh ref={warmRef} args={[undefined, undefined, warm.length]} material={warmMat}>
+      <instancedMesh ref={warmRef} args={[undefined, undefined, warm.length]} material={warmMat} castShadow receiveShadow>
         <boxGeometry />
       </instancedMesh>
     </group>

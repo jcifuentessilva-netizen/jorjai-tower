@@ -35,7 +35,7 @@ export default function AtmosphereRig() {
 
   return (
     <>
-      <ambientLight ref={ambientRef} intensity={0.16} />
+      <ambientLight ref={ambientRef} intensity={0.22} />
       <pointLight ref={pointRef} position={[-9, 4, -7]} intensity={3} color="#42D879" />
     </>
   )
