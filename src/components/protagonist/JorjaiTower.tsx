@@ -4,6 +4,7 @@ import { useFrame, useLoader } from '@react-three/fiber'
 import { ContactShadows, Text } from '@react-three/drei'
 import OfficeInterior from '../interior/OfficeInterior'
 import CreativeStudio from '../interior/CreativeStudio'
+import OfficePeople from '../people/OfficePeople'
 import { createFacadeTexture } from '../../lib/textures'
 import { glassMat, metalMat } from '../../lib/materials'
 
@@ -212,9 +213,10 @@ export default function JorjaiTower() {
         resolution={isHermesTUI || isMobile ? 256 : 512}
       />
 
-      {/* interiores: lobby + oficinas + estudio creativo */}
+      {/* interiores: lobby + oficinas + estudio creativo + personas */}
       <OfficeInterior />
       <CreativeStudio />
+      <OfficePeople />
 
       {/* limpieza de textura al desmontar */}
       <primitive object={facadeTex} />
