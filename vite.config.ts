@@ -8,6 +8,10 @@ export default defineConfig({
     // Guard para Hermes TUI: evita OOM/crash con escenas 3D pesadas
     __HERMES_TUI__: JSON.stringify(!!process.env.HERMES_TUI),
   },
+  preview: {
+    // permite acceso vía Cloudflare Tunnel (trycloudflare.com)
+    allowedHosts: true,
+  },
   build: {
     chunkSizeWarningLimit: 1100, // vendor-3d (three+drei) se carga lazy
     rolldownOptions: {
