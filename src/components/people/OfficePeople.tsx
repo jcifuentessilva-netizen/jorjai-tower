@@ -195,7 +195,7 @@ function Person({
 /* Distribución: 6 estaciones + recepción + estudio creativo           */
 /* ------------------------------------------------------------------ */
 export default function OfficePeople() {
-  const count = isHermesTUI ? 2 : isMobile ? 4 : 9
+  const count = isHermesTUI ? 2 : isMobile ? 4 : 12
 
   const placements = useMemo(() => {
     const all: { pos: [number, number, number]; rot: number; mode: Mode; seed: number; height?: number }[] = [
@@ -211,6 +211,10 @@ export default function OfficePeople() {
       // estudio creativo: 2 conversando junto a la mesa
       { pos: [-0.8, 4.87, 1.35], rot: -0.5, mode: 'standing', seed: 29 },
       { pos: [0.85, 4.87, 1.4], rot: 2.7, mode: 'standing', seed: 33 },
+      // sala de reuniones (piso 4): ejecutivos en la mesa
+      { pos: [-0.9, 3.62, 0.78], rot: Math.PI, mode: 'meeting', seed: 37 },
+      { pos: [0.9, 3.62, 0.78], rot: Math.PI, mode: 'meeting', seed: 41 },
+      { pos: [1.62, 3.62, 0], rot: -Math.PI / 2, mode: 'meeting', seed: 45 },
     ]
     return all.slice(0, count)
   }, [count])

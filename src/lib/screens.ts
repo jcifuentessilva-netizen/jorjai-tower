@@ -5,7 +5,7 @@ import * as THREE from 'three'
 /* code | sales | clients | automation | ai | metrics                  */
 /* ------------------------------------------------------------------ */
 
-export type ScreenKind = 'code' | 'sales' | 'clients' | 'automation' | 'ai' | 'metrics'
+export type ScreenKind = 'code' | 'sales' | 'clients' | 'automation' | 'ai' | 'metrics' | 'growth'
 
 export interface LiveScreen {
   tex: THREE.CanvasTexture
@@ -257,6 +257,62 @@ function drawMetrics(ctx: CanvasRenderingContext2D, t: number, rand: () => numbe
   label(ctx, 'AUTOMATION · AI · WEB', 20, 270, 11, GRAY, false)
 }
 
+/* ---------------- GROWTH (gráfico verde en ascenso) ---------------- */
+function drawGrowth(ctx: CanvasRenderingContext2D, t: number, _rand: () => number) {
+  ctx.fillStyle = DARK
+  ctx.fillRect(0, 0, 512, 288)
+  label(ctx, 'CRECIMIENTO JORJAI', 20, 30, 16, NEON)
+  label(ctx, '+247%', 20, 80, 44, NEON)
+  label(ctx, 'ingresos últimos 12 meses', 20, 100, 12, GRAY, false)
+
+  // rejilla
+  ctx.strokeStyle = 'rgba(66,216,121,0.10)'
+  ctx.lineWidth = 1
+  for (let i = 0; i < 6; i++) {
+    const y = 120 + i * 26
+    ctx.beginPath()
+    ctx.moveTo(20, y)
+    ctx.lineTo(492, y)
+    ctx.stroke()
+  }
+
+  // área bajo la curva
+  ctx.beginPath()
+  ctx.moveTo(30, 250)
+  for (let i = 0; i <= 40; i++) {
+    const x = 30 + (i * 460) / 40
+    const y = 250 - (18 + i * 4.6 + Math.sin(t * 0.8 + i * 0.35) * 8 + i * i * 0.02)
+    ctx.lineTo(x, y)
+  }
+  ctx.lineTo(490, 250)
+  ctx.closePath()
+  const grad = ctx.createLinearGradient(0, 120, 0, 250)
+  grad.addColorStop(0, 'rgba(66,216,121,0.35)')
+  grad.addColorStop(1, 'rgba(66,216,121,0.02)')
+  ctx.fillStyle = grad
+  ctx.fill()
+
+  // línea de ascenso
+  ctx.strokeStyle = NEON
+  ctx.lineWidth = 3
+  ctx.beginPath()
+  for (let i = 0; i <= 40; i++) {
+    const x = 30 + (i * 460) / 40
+    const y = 250 - (18 + i * 4.6 + Math.sin(t * 0.8 + i * 0.35) * 8 + i * i * 0.02)
+    if (i === 0) ctx.moveTo(x, y)
+    else ctx.lineTo(x, y)
+  }
+  ctx.stroke()
+
+  // punto final pulsante
+  const fx = 30 + 460
+  const fy = 250 - (18 + 40 * 4.6 + Math.sin(t * 0.8 + 40 * 0.35) * 8 + 1600 * 0.02)
+  ctx.fillStyle = '#F4F7F4'
+  ctx.beginPath()
+  ctx.arc(fx, fy, 5 + Math.sin(t * 3) * 1.5, 0, Math.PI * 2)
+  ctx.fill()
+}
+
 /* ---------------- factory ---------------- */
 export function createScreenTexture(kind: ScreenKind, seed: number, w = 512, h = 288): LiveScreen {
   const canvas = document.createElement('canvas')
@@ -269,7 +325,7 @@ export function createScreenTexture(kind: ScreenKind, seed: number, w = 512, h =
   tex.colorSpace = THREE.SRGBColorSpace
 
   const draw: (c: CanvasRenderingContext2D, t: number, r: () => number) => void =
-    kind === 'code' ? drawCode : kind === 'sales' ? drawSales : kind === 'clients' ? drawClients : kind === 'automation' ? drawAutomation : kind === 'ai' ? drawAI : drawMetrics
+    kind === 'code' ? drawCode : kind === 'sales' ? drawSales : kind === 'clients' ? drawClients : kind === 'automation' ? drawAutomation : kind === 'ai' ? drawAI : kind === 'growth' ? drawGrowth : drawMetrics
 
   draw(ctx, 0, rand)
   tex.needsUpdate = true
