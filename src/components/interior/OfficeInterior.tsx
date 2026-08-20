@@ -6,6 +6,7 @@ import { createCarpetTexture } from '../../lib/textures'
 import LiveScreen from '../ui/LiveScreen'
 import type { ScreenKind } from '../../lib/screens'
 import CityWindow from '../environment/CityWindow'
+import { DeskProps, Laptop, DeskPhone } from '../props/OfficeProps'
 
 const isHermesTUI = typeof __HERMES_TUI__ !== 'undefined' && __HERMES_TUI__
 
@@ -14,14 +15,6 @@ function Desk({ position, rotationY, kind, seed }: { position: [number, number, 
   const deskMat = useMemo(() => metalMat('#222a26', 0.5), [])
   const darkMat = useMemo(() => new THREE.MeshStandardMaterial({ color: '#0c0f0e', roughness: 0.7 }), [])
   const chairMat = useMemo(() => leatherMat('#141a17'), [])
-  const mugMat = useMemo(
-    () => new THREE.MeshPhysicalMaterial({ color: '#e8e4dd', roughness: 0.25, clearcoat: 0.8 }),
-    [],
-  )
-  const notebookMat = useMemo(
-    () => new THREE.MeshStandardMaterial({ color: '#f4f7f4', roughness: 0.85 }),
-    [],
-  )
 
   return (
     <group position={position} rotation={[0, rotationY, 0]}>
@@ -43,19 +36,8 @@ function Desk({ position, rotationY, kind, seed }: { position: [number, number, 
       <mesh position={[0, 0.82, -0.34]} material={darkMat}>
         <boxGeometry args={[0.08, 0.1, 0.05]} />
       </mesh>
-      {/* objetos de escritorio: taza + libreta */}
-      <mesh position={[0.52, 0.785, 0.18]} material={mugMat}>
-        <cylinderGeometry args={[0.055, 0.045, 0.09, 14]} />
-      </mesh>
-      <mesh position={[0.585, 0.785, 0.18]} rotation={[0, 0, Math.PI / 2]} material={mugMat}>
-        <torusGeometry args={[0.032, 0.011, 8, 12]} />
-      </mesh>
-      <mesh position={[-0.52, 0.79, 0.2]} rotation={[0, 0.25, 0]} material={notebookMat}>
-        <boxGeometry args={[0.22, 0.015, 0.16]} />
-      </mesh>
-      <mesh position={[-0.52, 0.79, 0.2]} rotation={[0, 0.25, 0]} material={darkMat}>
-        <boxGeometry args={[0.22, 0.02, 0.005]} />
-      </mesh>
+      {/* microobjetos variados por seed */}
+      <DeskProps position={[0, 0.775, 0]} seed={seed} />
       {/* silla */}
       <group position={[0, 0, 0.42]}>
         <mesh position={[0, 0.05, 0]} material={darkMat}>
@@ -143,6 +125,9 @@ export default function OfficeInterior() {
       <mesh position={[-1.3, 1.16, -1.15]} material={receptionMat}>
         <boxGeometry args={[2.3, 0.08, 0.65]} />
       </mesh>
+      {/* computador + teléfono de recepción */}
+      <Laptop position={[-1.55, 1.5, -1.15]} rotation={0.3} screen="clients" seed={7} />
+      <DeskPhone position={[-1.05, 1.51, -1.15]} rotation={-0.4} />
       {/* logo en la pared interior (mirando hacia dentro) */}
       <Text
         position={[0, 1.95, -1.62]}

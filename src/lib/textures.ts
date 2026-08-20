@@ -363,6 +363,124 @@ export function createGrassTexture(seed = 23): THREE.CanvasTexture {
   return tex
 }
 
+/** Hoja de papel con texto (briefs, documentos, wireframes). */
+export function createPaperTexture(seed = 8, lines = 7): THREE.CanvasTexture {
+  const canvas = document.createElement('canvas')
+  canvas.width = 256
+  canvas.height = 160
+  const ctx = canvas.getContext('2d')!
+  ctx.fillStyle = '#f7f5ef'
+  ctx.fillRect(0, 0, 256, 160)
+  // borde de hoja
+  ctx.strokeStyle = 'rgba(160,150,130,0.5)'
+  ctx.lineWidth = 1
+  ctx.strokeRect(1, 1, 254, 158)
+
+  let s = seed >>> 0
+  const rand = () => {
+    s = (s * 16807) % 2147483647
+    return s / 2147483647
+  }
+  // título garabateado
+  ctx.strokeStyle = 'rgba(60,70,90,0.75)'
+  ctx.lineWidth = 2.4
+  ctx.beginPath()
+  ctx.moveTo(14, 18)
+  ctx.quadraticCurveTo(40, 12, 70, 17)
+  ctx.quadraticCurveTo(110, 23, 150, 16)
+  ctx.stroke()
+  // líneas de texto
+  ctx.strokeStyle = 'rgba(90,95,105,0.55)'
+  ctx.lineWidth = 1.6
+  for (let i = 0; i < lines; i++) {
+    const y = 30 + i * 15
+    const w = 60 + rand() * 160
+    ctx.beginPath()
+    ctx.moveTo(14, y)
+    ctx.quadraticCurveTo(14 + w / 2, y - 2, 14 + w, y)
+    ctx.stroke()
+  }
+  // caja de wireframe (rect con cruz)
+  if (rand() > 0.3) {
+    ctx.strokeStyle = 'rgba(70,80,95,0.7)'
+    ctx.lineWidth = 1.5
+    const x = 20 + rand() * 100
+    const y = 36 + rand() * 60
+    ctx.strokeRect(x, y, 40 + rand() * 60, 24 + rand() * 24)
+  }
+
+  const tex = new THREE.CanvasTexture(canvas)
+  tex.colorSpace = THREE.SRGBColorSpace
+  return tex
+}
+
+/** Pizarra blanca con diagrama de flujo UX (cajas, flechas, notas). */
+export function createWhiteboardTexture(_seed = 31): THREE.CanvasTexture {
+  const canvas = document.createElement('canvas')
+  canvas.width = 512
+  canvas.height = 288
+  const ctx = canvas.getContext('2d')!
+  ctx.fillStyle = '#eef2ee'
+  ctx.fillRect(0, 0, 512, 288)
+
+  const ink = 'rgba(30,60,90,0.8)'
+  const ink2 = 'rgba(190,60,50,0.75)'
+  const ink3 = 'rgba(40,120,70,0.8)'
+
+  // nodos del flujo
+  const nodes: [number, number, number, number, string][] = [
+    [30, 60, 120, 44, ink], [200, 60, 130, 44, ink], [380, 60, 110, 44, ink2],
+    [110, 180, 140, 44, ink3], [320, 180, 130, 44, ink],
+  ]
+  for (const [x, y, w, h, c] of nodes) {
+    ctx.strokeStyle = c
+    ctx.lineWidth = 2.5
+    ctx.beginPath()
+    ctx.roundRect(x, y, w, h, 8)
+    ctx.stroke()
+    // texto garabateado dentro
+    ctx.beginPath()
+    ctx.moveTo(x + 14, y + h / 2)
+    ctx.quadraticCurveTo(x + w / 2, y + h / 2 - 3, x + w - 14, y + h / 2)
+    ctx.stroke()
+  }
+  // flechas
+  ctx.strokeStyle = ink
+  ctx.lineWidth = 2
+  const links: [number, number][] = [[0, 1], [1, 2], [0, 3], [1, 3], [2, 4], [3, 4]]
+  for (const [a, b] of links) {
+    const [ax, ay, aw] = nodes[a]
+    const [bx, by] = nodes[b]
+    const x1 = ax + aw
+    const y1 = ay + 22
+    ctx.beginPath()
+    ctx.moveTo(x1, y1)
+    ctx.lineTo(bx, by + 22)
+    ctx.stroke()
+    // punta de flecha
+    ctx.beginPath()
+    ctx.moveTo(bx, by + 22)
+    ctx.lineTo(bx - 10, by + 16)
+    ctx.lineTo(bx - 10, by + 28)
+    ctx.closePath()
+    ctx.fillStyle = ink
+    ctx.fill()
+  }
+  // nota al margen
+  ctx.fillStyle = 'rgba(255,240,150,0.9)'
+  ctx.fillRect(420, 190, 70, 60)
+  ctx.strokeStyle = 'rgba(120,100,30,0.6)'
+  ctx.strokeRect(420, 190, 70, 60)
+  ctx.beginPath()
+  ctx.moveTo(432, 210)
+  ctx.quadraticCurveTo(455, 205, 478, 210)
+  ctx.stroke()
+
+  const tex = new THREE.CanvasTexture(canvas)
+  tex.colorSpace = THREE.SRGBColorSpace
+  return tex
+}
+
 /** Rostro humano equirectangular: piel + ojos + cejas + boca (+ barba opcional). */
 export function createFaceTexture(seed = 1): THREE.CanvasTexture {
   const canvas = document.createElement('canvas')

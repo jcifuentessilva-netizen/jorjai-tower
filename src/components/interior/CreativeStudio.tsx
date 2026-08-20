@@ -4,6 +4,7 @@ import { Text } from '@react-three/drei'
 import { createGlowTexture, createWoodTexture, createCarpetTexture } from '../../lib/textures'
 import { woodMat, concreteMat, leatherMat, metalMat, carpetMat } from '../../lib/materials'
 import CityWindow from '../environment/CityWindow'
+import { StudioProps } from '../props/OfficeProps'
 
 const isHermesTUI = typeof __HERMES_TUI__ !== 'undefined' && __HERMES_TUI__
 
@@ -160,6 +161,8 @@ export default function CreativeStudio() {
       <mesh position={[0, 5.5, 0]} material={woodMat_}>
         <boxGeometry args={[2.6, 0.06, 1.0]} />
       </mesh>
+      {/* microdetalle del estudio: lápices, tablets, briefs, cámara */}
+      <StudioProps position={[0, 5.53, 0]} />
       <mesh position={[-1.2, 5.2, -0.4]} material={darkMat}>
         <boxGeometry args={[0.05, 0.6, 0.05]} />
       </mesh>

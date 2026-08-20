@@ -3,6 +3,7 @@ import * as THREE from 'three'
 import { metalMat, leatherMat, fabricMat, carpetMat } from '../../lib/materials'
 import { createFabricTexture, createCarpetTexture } from '../../lib/textures'
 import CityWindow from '../environment/CityWindow'
+import { Papers, Mug } from '../props/OfficeProps'
 
 const isHermesTUI = typeof __HERMES_TUI__ !== 'undefined' && __HERMES_TUI__
 
@@ -222,6 +223,9 @@ export default function LoungeRoom() {
       <mesh position={[0, 5.24, 0.55]} material={metal}>
         <cylinderGeometry args={[0.03, 0.03, 0.3, 8]} />
       </mesh>
+      {/* revistas y tazas en la mesa de centro */}
+      <Papers position={[0.1, 5.25, 0.55]} rotation={0.3} seed={41} />
+      <Mug position={[-0.12, 5.26, 0.55]} rotation={0.7} />
 
       {/* juegos */}
       <PingPong position={[0, 4.88, -0.55]} />

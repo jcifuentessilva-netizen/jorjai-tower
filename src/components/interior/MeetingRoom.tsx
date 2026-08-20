@@ -4,6 +4,7 @@ import { glassMat, metalMat, leatherMat, carpetMat } from '../../lib/materials'
 import { createCarpetTexture } from '../../lib/textures'
 import LiveScreen from '../ui/LiveScreen'
 import CityWindow from '../environment/CityWindow'
+import { MeetingProps, Whiteboard } from '../props/OfficeProps'
 
 const isHermesTUI = typeof __HERMES_TUI__ !== 'undefined' && __HERMES_TUI__
 
@@ -194,6 +195,11 @@ export default function MeetingRoom() {
       <mesh position={[0, 3.64, 0]} material={metal}>
         <cylinderGeometry args={[0.2, 0.2, 0.03, 16]} />
       </mesh>
+      {/* microdetalle: vasos, botellas, briefs sobre la mesa */}
+      <MeetingProps position={[0, 4.05, 0]} />
+
+      {/* pizarra con diagrama UX */}
+      <Whiteboard position={[-2.25, 4.25, 0.4]} rotation={[0, Math.PI / 2, 0]} size={[1.1, 0.65]} />
 
       {/* sillas reclinables */}
       {chairs.map((p, i) => (
