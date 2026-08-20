@@ -2,7 +2,7 @@ import { Suspense, lazy } from 'react'
 import * as THREE from 'three'
 import { Canvas } from '@react-three/fiber'
 import { Environment, Lightformer } from '@react-three/drei'
-import { EffectComposer, Bloom, DepthOfField, SSAO, Vignette } from '@react-three/postprocessing'
+import { EffectComposer, Bloom, SSAO, Vignette } from '@react-three/postprocessing'
 import CameraRig from './components/camera/CameraRig'
 import AtmosphereRig from './components/atmosphere/AtmosphereRig'
 import PhaseOverlay from './components/ui/PhaseOverlay'
@@ -99,13 +99,8 @@ export default function App() {
             {!__HERMES_TUI__ && (
               <EffectComposer multisampling={isMobile ? 0 : 4}>
                 <Bloom mipmapBlur intensity={0.4} luminanceThreshold={0.85} luminanceSmoothing={0.2} />
-                {/* profundidad de campo sutil + oclusión ambiental (no en móvil) */}
-                {!isMobile && (
-                  <>
-                    <DepthOfField focusDistance={0.045} focalLength={0.12} bokehScale={2.2} height={540} />
-                    <SSAO radius={0.08} intensity={14} luminanceInfluence={0.55} samples={16} />
-                  </>
-                )}
+                {/* oclusión ambiental (no en móvil) */}
+                {!isMobile && <SSAO radius={0.08} intensity={14} luminanceInfluence={0.55} samples={16} />}
                 <Vignette eskil={false} offset={0.22} darkness={0.55} />
               </EffectComposer>
             )}
