@@ -13,6 +13,7 @@ import { useScrollController } from './hooks/useScrollController'
 const JorjaiTower = lazy(() => import('./components/protagonist/JorjaiTower'))
 const CitySkyline = lazy(() => import('./components/environment/CitySkyline'))
 const ChileMap = lazy(() => import('./components/environment/ChileMap'))
+const Plaza = lazy(() => import('./components/environment/Plaza'))
 const QualityParticles = lazy(() => import('./components/atmosphere/QualityParticles'))
 const Clouds = lazy(() => import('./components/atmosphere/Clouds'))
 
@@ -88,6 +89,7 @@ export default function App() {
             <AtmosphereRig />
             <CameraRig />
             <CitySkyline />
+            <Plaza />
             <ChileMap />
             <QualityParticles />
             <Clouds />

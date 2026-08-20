@@ -281,6 +281,88 @@ export function createSantiagoViewTexture(seed = 5): THREE.CanvasTexture {
 
 const SKIN_TONES = ['#d9a47e', '#b57e5a', '#8d5a3b', '#e8b98f']
 
+/** Adoquín/cemento de plaza: losas con juntas y variación. */
+export function createPlazaTexture(seed = 17): THREE.CanvasTexture {
+  const canvas = document.createElement('canvas')
+  canvas.width = 512
+  canvas.height = 512
+  const ctx = canvas.getContext('2d')!
+  ctx.fillStyle = '#8d928e'
+  ctx.fillRect(0, 0, 512, 512)
+
+  let s = seed >>> 0
+  const rand = () => {
+    s = (s * 16807) % 2147483647
+    return s / 2147483647
+  }
+  // variación de tono por losa (grid 4x4)
+  const grid = 4
+  const cell = 512 / grid
+  for (let gx = 0; gx < grid; gx++) {
+    for (let gy = 0; gy < grid; gy++) {
+      const v = 120 + Math.floor(rand() * 40)
+      ctx.fillStyle = `rgb(${v},${v + 3},${v + 4})`
+      ctx.fillRect(gx * cell + 2, gy * cell + 2, cell - 4, cell - 4)
+      // speckle
+      for (let i = 0; i < 400; i++) {
+        const sv = 90 + Math.floor(rand() * 60)
+        ctx.fillStyle = `rgba(${sv},${sv},${sv - 4},0.12)`
+        ctx.fillRect(gx * cell + rand() * cell, gy * cell + rand() * cell, 2.5, 2.5)
+      }
+    }
+  }
+  // juntas oscuras
+  ctx.strokeStyle = 'rgba(40,44,42,0.55)'
+  ctx.lineWidth = 3
+  for (let i = 0; i <= grid; i++) {
+    ctx.beginPath()
+    ctx.moveTo(i * cell, 0)
+    ctx.lineTo(i * cell, 512)
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(0, i * cell)
+    ctx.lineTo(512, i * cell)
+    ctx.stroke()
+  }
+
+  const tex = new THREE.CanvasTexture(canvas)
+  tex.colorSpace = THREE.SRGBColorSpace
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping
+  return tex
+}
+
+/** Césped: verde base con variación de hojas. */
+export function createGrassTexture(seed = 23): THREE.CanvasTexture {
+  const canvas = document.createElement('canvas')
+  canvas.width = 256
+  canvas.height = 256
+  const ctx = canvas.getContext('2d')!
+  ctx.fillStyle = '#2c5e33'
+  ctx.fillRect(0, 0, 256, 256)
+
+  let s = seed >>> 0
+  const rand = () => {
+    s = (s * 16807) % 2147483647
+    return s / 2147483647
+  }
+  for (let i = 0; i < 14000; i++) {
+    const g = 60 + Math.floor(rand() * 60)
+    ctx.fillStyle = `rgba(${g - 20},${g + 20},${g - 10},${0.25 + rand() * 0.35})`
+    const x = rand() * 256
+    const y = rand() * 256
+    ctx.fillRect(x, y, 1.5, 2 + rand() * 2)
+  }
+  for (let y = 0; y < 256; y += 4) {
+    ctx.fillStyle = `rgba(255,255,255,${0.012 + (y % 8 === 0 ? 0.018 : 0)})`
+    ctx.fillRect(0, y, 256, 1)
+  }
+
+  const tex = new THREE.CanvasTexture(canvas)
+  tex.colorSpace = THREE.SRGBColorSpace
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping
+  return tex
+}
+
 /** Rostro humano equirectangular: piel + ojos + cejas + boca (+ barba opcional). */
 export function createFaceTexture(seed = 1): THREE.CanvasTexture {
   const canvas = document.createElement('canvas')

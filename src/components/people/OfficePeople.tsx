@@ -13,9 +13,10 @@ const isHermesTUI = typeof __HERMES_TUI__ !== 'undefined' && __HERMES_TUI__
 const isMobile =
   typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches
 
-type Mode = 'typing' | 'looking' | 'meeting' | 'standing'
+type Mode = 'typing' | 'looking' | 'meeting' | 'standing' | 'walking'
 
 interface Rig {
+  root: THREE.Group
   body: THREE.Group
   head: THREE.Group
   lFore: THREE.Group
@@ -26,6 +27,8 @@ interface Rig {
   phase: number
   speed: number
   height: number
+  baseX: number
+  walkAmp: number
 }
 
 /* geometrías compartidas (módulo, sin alloc por frame) */
@@ -55,7 +58,18 @@ function animateRig(r: Rig, t: number): void {
   // respiración sutil
   body.position.y = Math.sin(tt * 1.4) * 0.008
 
-  if (mode === 'typing') {
+  if (mode === 'walking') {
+    // caminata: brazos péndulo, inclinación, avance senoidal
+    lArm.rotation.x = -0.35 + Math.sin(tt * 4) * 0.3
+    rArm.rotation.x = -0.35 + Math.sin(tt * 4 + Math.PI) * 0.3
+    lFore.rotation.x = 0.15
+    rFore.rotation.x = 0.15
+    head.rotation.y = 0
+    body.rotation.z = Math.sin(tt * 4) * 0.025
+    r.root.position.x = r.baseX + Math.sin(tt * 0.22) * r.walkAmp
+    r.root.position.z = r.root.userData.baseZ ?? r.root.position.z
+    r.root.rotation.y = Math.cos(tt * 0.22) > 0 ? Math.PI / 2 : -Math.PI / 2
+  } else if (mode === 'typing') {
     // brazos al frente tecleando (fase opuesta)
     lArm.rotation.x = -1.25
     rArm.rotation.x = -1.25
@@ -94,12 +108,16 @@ function Person({
   mode,
   seed,
   height = 1,
+  holdingPhone = false,
+  walkAmp = 6,
 }: {
   position: [number, number, number]
   rotationY: number
   mode: Mode
   seed: number
   height?: number
+  holdingPhone?: boolean
+  walkAmp?: number
 }) {
   const groupRef = useRef<THREE.Group>(null)
   const bodyRef = useRef<THREE.Group>(null)
@@ -120,6 +138,7 @@ function Person({
       shirt: new THREE.MeshStandardMaterial({ color: shirt, roughness: 0.85 }),
       pants: new THREE.MeshStandardMaterial({ color: pants, roughness: 0.9 }),
       hair: new THREE.MeshStandardMaterial({ color: hair, roughness: 0.92 }),
+      phone: new THREE.MeshBasicMaterial({ color: '#9fd8ff', toneMapped: false }),
     }),
     [faceTex, shirt, pants, hair],
   )
@@ -127,6 +146,7 @@ function Person({
   /* registro del rig en el orchestrator */
   useEffect(() => {
     const rig: Rig = {
+      root: groupRef.current!,
       body: bodyRef.current!,
       head: headRef.current!,
       lFore: lForeRef.current!,
@@ -137,15 +157,18 @@ function Person({
       phase: seed * 1.7,
       speed: 0.9 + (seed % 5) * 0.12,
       height,
+      baseX: position[0],
+      walkAmp,
     }
+    groupRef.current!.userData.baseZ = position[2]
     rigs.push(rig)
     return () => {
       const i = rigs.indexOf(rig)
       if (i >= 0) rigs.splice(i, 1)
     }
-  }, [mode, seed, height])
+  }, [mode, seed, height, walkAmp, position])
 
-  const sit = mode !== 'standing'
+  const sit = mode !== 'standing' && mode !== 'walking'
   const hipY = sit ? 0.46 : 0.95
 
   return (
@@ -187,18 +210,26 @@ function Person({
           </group>
         </group>
       </group>
+      {/* celular en la mano */}
+      {holdingPhone && (
+        <mesh position={[0, hipY + 0.52, 0.26]} rotation={[0.4, 0, 0]} material={mats.phone}>
+          <planeGeometry args={[0.06, 0.11]} />
+        </mesh>
+      )}
     </group>
   )
 }
+
+export { Person }
 
 /* ------------------------------------------------------------------ */
 /* Distribución: 6 estaciones + recepción + estudio creativo           */
 /* ------------------------------------------------------------------ */
 export default function OfficePeople() {
-  const count = isHermesTUI ? 2 : isMobile ? 4 : 14
+  const count = isHermesTUI ? 2 : isMobile ? 4 : 17
 
   const placements = useMemo(() => {
-    const all: { pos: [number, number, number]; rot: number; mode: Mode; seed: number; height?: number }[] = [
+    const all: { pos: [number, number, number]; rot: number; mode: Mode; seed: number; height?: number; holdingPhone?: boolean }[] = [
       // oficinas (piso 2-3, suelo y=2.37) — en las sillas de cada estación
       { pos: [-1.5, 2.37, -0.92], rot: 0, mode: 'typing', seed: 1 },
       { pos: [0, 2.37, -0.92], rot: 0, mode: 'typing', seed: 5 },
@@ -218,6 +249,10 @@ export default function OfficePeople() {
       // lounge (piso 5): descanso en los sofás
       { pos: [-0.85, 4.88, 1.1], rot: 0.15, mode: 'looking', seed: 49 },
       { pos: [0.9, 4.88, 1.05], rot: -0.2, mode: 'looking', seed: 53 },
+      // exterior (plaza): caminando + sentado en banca con celular
+      { pos: [-5, 0, 4.5], rot: Math.PI / 2, mode: 'walking', seed: 57 },
+      { pos: [4, 0, 7], rot: Math.PI / 2, mode: 'walking', seed: 61 },
+      { pos: [-3.2, 0.42, 4.5], rot: 0.2, mode: 'meeting', seed: 65, holdingPhone: true },
     ]
     return all.slice(0, count)
   }, [count])
@@ -229,7 +264,7 @@ export default function OfficePeople() {
   return (
     <group>
       {placements.map((p, i) => (
-        <Person key={i} position={p.pos} rotationY={p.rot} mode={p.mode} seed={p.seed} height={p.height} />
+        <Person key={i} position={p.pos} rotationY={p.rot} mode={p.mode} seed={p.seed} height={p.height} holdingPhone={p.holdingPhone} />
       ))}
     </group>
   )
