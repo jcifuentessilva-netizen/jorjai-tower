@@ -95,7 +95,7 @@ export const PHASES: PhaseData[] = [
     name: 'lobby',
     progressStart: 0.18,
     progressEnd: 0.3,
-    camera: { position: { x: 0, y: 1.7, z: 3.4 }, target: { x: 0, y: 1.3, z: -2 }, fov: 55 },
+    camera: { position: { x: 0, y: 1.65, z: 1.25 }, target: { x: 0, y: 1.4, z: -0.8 }, fov: 58 },
     atmosphere: {
       bgColor: '#0d1512',
       fogColor: '#0d1512',
@@ -112,7 +112,7 @@ export const PHASES: PhaseData[] = [
     name: 'oficinas',
     progressStart: 0.3,
     progressEnd: 0.42,
-    camera: { position: { x: 3.2, y: 3.55, z: 2.6 }, target: { x: 0, y: 3.1, z: -1 }, fov: 50 },
+    camera: { position: { x: 1.9, y: 3.55, z: 1.45 }, target: { x: -0.4, y: 3.15, z: -0.6 }, fov: 55 },
     atmosphere: {
       bgColor: '#101a16',
       fogColor: '#101a16',
@@ -129,7 +129,7 @@ export const PHASES: PhaseData[] = [
     name: 'labs',
     progressStart: 0.42,
     progressEnd: 0.54,
-    camera: { position: { x: 0, y: 4.25, z: 2.7 }, target: { x: 0, y: 4.1, z: -0.6 }, fov: 50 },
+    camera: { position: { x: 0, y: 4.2, z: 1.3 }, target: { x: 0, y: 4.05, z: -0.5 }, fov: 52 },
     atmosphere: {
       bgColor: '#0c1410',
       fogColor: '#0c1410',
@@ -146,7 +146,7 @@ export const PHASES: PhaseData[] = [
     name: 'experiencia',
     progressStart: 0.54,
     progressEnd: 0.64,
-    camera: { position: { x: 0, y: 5.55, z: 2.7 }, target: { x: 0, y: 5.35, z: -0.6 }, fov: 52 },
+    camera: { position: { x: 0, y: 5.5, z: 1.3 }, target: { x: 0, y: 5.3, z: -0.4 }, fov: 55 },
     atmosphere: {
       bgColor: '#15100b',
       fogColor: '#15100b',
@@ -163,7 +163,7 @@ export const PHASES: PhaseData[] = [
     name: 'tecnologia',
     progressStart: 0.64,
     progressEnd: 0.74,
-    camera: { position: { x: 0, y: 7.6, z: 3.2 }, target: { x: 0, y: 7.4, z: -0.6 }, fov: 52 },
+    camera: { position: { x: 0, y: 7.55, z: 1.3 }, target: { x: 0, y: 7.35, z: -0.4 }, fov: 55 },
     atmosphere: {
       bgColor: '#0b100d',
       fogColor: '#0b100d',

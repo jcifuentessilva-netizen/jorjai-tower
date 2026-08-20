@@ -128,10 +128,10 @@ export default function OfficeInterior() {
       {/* computador + teléfono de recepción */}
       <Laptop position={[-1.55, 1.5, -1.15]} rotation={0.3} screen="clients" seed={7} />
       <DeskPhone position={[-1.05, 1.51, -1.15]} rotation={-0.4} />
-      {/* logo en la pared interior (mirando hacia dentro) */}
+      {/* logo en la pared oeste (mirando hacia dentro — el ventanal norte lo cubría) */}
       <Text
-        position={[0, 1.95, -1.62]}
-        rotation={[0, Math.PI, 0]}
+        position={[-2.28, 1.95, 0.2]}
+        rotation={[0, Math.PI / 2, 0]}
         fontSize={0.3}
         letterSpacing={0.2}
         color="#42D879"
