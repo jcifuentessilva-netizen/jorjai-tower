@@ -1,19 +1,24 @@
 import { useMemo } from 'react'
 import * as THREE from 'three'
 import { Text } from '@react-three/drei'
-import { createCodeTexture } from '../../lib/textures'
 import { metalMat, floorMat, leatherMat } from '../../lib/materials'
+import LiveScreen from '../ui/LiveScreen'
+import type { ScreenKind } from '../../lib/screens'
 
 const isHermesTUI = typeof __HERMES_TUI__ !== 'undefined' && __HERMES_TUI__
 
-/* ---------- estación de trabajo: mesa + monitor + silla ---------- */
-function Desk({ position, rotationY, screen }: { position: [number, number, number]; rotationY: number; screen: THREE.Texture }) {
+/* ---------- estación de trabajo: mesa + monitor + silla + objetos ---------- */
+function Desk({ position, rotationY, kind, seed }: { position: [number, number, number]; rotationY: number; kind: ScreenKind; seed: number }) {
   const deskMat = useMemo(() => metalMat('#222a26', 0.5), [])
   const darkMat = useMemo(() => new THREE.MeshStandardMaterial({ color: '#0c0f0e', roughness: 0.7 }), [])
   const chairMat = useMemo(() => leatherMat('#141a17'), [])
-  const screenMat = useMemo(
-    () => new THREE.MeshBasicMaterial({ map: screen, toneMapped: false }),
-    [screen],
+  const mugMat = useMemo(
+    () => new THREE.MeshPhysicalMaterial({ color: '#e8e4dd', roughness: 0.25, clearcoat: 0.8 }),
+    [],
+  )
+  const notebookMat = useMemo(
+    () => new THREE.MeshStandardMaterial({ color: '#f4f7f4', roughness: 0.85 }),
+    [],
   )
 
   return (
@@ -32,11 +37,22 @@ function Desk({ position, rotationY, screen }: { position: [number, number, numb
       <mesh position={[0, 0.98, -0.34]} material={darkMat}>
         <boxGeometry args={[0.56, 0.03, 0.03]} />
       </mesh>
-      <mesh position={[0, 0.98, -0.31]} material={screenMat}>
-        <planeGeometry args={[0.52, 0.32]} />
-      </mesh>
+      <LiveScreen kind={kind} seed={seed} size={[0.52, 0.32]} position={[0, 0.98, -0.31]} />
       <mesh position={[0, 0.82, -0.34]} material={darkMat}>
         <boxGeometry args={[0.08, 0.1, 0.05]} />
+      </mesh>
+      {/* objetos de escritorio: taza + libreta */}
+      <mesh position={[0.52, 0.785, 0.18]} material={mugMat}>
+        <cylinderGeometry args={[0.055, 0.045, 0.09, 14]} />
+      </mesh>
+      <mesh position={[0.585, 0.785, 0.18]} rotation={[0, 0, Math.PI / 2]} material={mugMat}>
+        <torusGeometry args={[0.032, 0.011, 8, 12]} />
+      </mesh>
+      <mesh position={[-0.52, 0.79, 0.2]} rotation={[0, 0.25, 0]} material={notebookMat}>
+        <boxGeometry args={[0.22, 0.015, 0.16]} />
+      </mesh>
+      <mesh position={[-0.52, 0.79, 0.2]} rotation={[0, 0.25, 0]} material={darkMat}>
+        <boxGeometry args={[0.22, 0.02, 0.005]} />
       </mesh>
       {/* silla */}
       <group position={[0, 0, 0.42]}>
@@ -83,10 +99,6 @@ function Plant({ position }: { position: [number, number, number] }) {
 /* Interior: lobby (recepción) + oficinas (pisos 2-3)                  */
 /* ================================================================== */
 export default function OfficeInterior() {
-  const codeGreen = useMemo(() => createCodeTexture(7, '#42D879', '#1f5c3a'), [])
-  const codeBlue = useMemo(() => createCodeTexture(13, '#6fd0ff', '#234f6b'), [])
-  const codeWhite = useMemo(() => createCodeTexture(29, '#e8f2ec', '#5a6b62'), [])
-
   const floorMat_ = useMemo(() => floorMat('#101613', 0.45), [])
   const receptionMat = useMemo(() => metalMat('#1a211d', 0.5), [])
   const neonMat = useMemo(
@@ -99,14 +111,14 @@ export default function OfficeInterior() {
     [],
   )
 
-  /* 6 estaciones: 2 filas × 3 (piso oficinas, y=2.36..4.85) */
-  const desks: { pos: [number, number, number]; rot: number; tex: THREE.Texture }[] = [
-    { pos: [-1.5, 3.1, -0.5], rot: 0, tex: codeGreen },
-    { pos: [0, 3.1, -0.5], rot: 0, tex: codeBlue },
-    { pos: [1.5, 3.1, -0.5], rot: 0, tex: codeWhite },
-    { pos: [-1.5, 3.1, 0.9], rot: Math.PI, tex: codeBlue },
-    { pos: [0, 3.1, 0.9], rot: Math.PI, tex: codeWhite },
-    { pos: [1.5, 3.1, 0.9], rot: Math.PI, tex: codeGreen },
+  /* 6 estaciones por departamento: fila 1 = WEB DEV, fila 2 = E-COMMERCE */
+  const desks: { pos: [number, number, number]; rot: number; kind: ScreenKind; seed: number }[] = [
+    { pos: [-1.5, 3.1, -0.5], rot: 0, kind: 'code', seed: 7 },
+    { pos: [0, 3.1, -0.5], rot: 0, kind: 'code', seed: 13 },
+    { pos: [1.5, 3.1, -0.5], rot: 0, kind: 'code', seed: 29 },
+    { pos: [-1.5, 3.1, 0.9], rot: Math.PI, kind: 'sales', seed: 41 },
+    { pos: [0, 3.1, 0.9], rot: Math.PI, kind: 'clients', seed: 53 },
+    { pos: [1.5, 3.1, 0.9], rot: Math.PI, kind: 'metrics', seed: 67 },
   ]
 
   return (
@@ -147,8 +159,11 @@ export default function OfficeInterior() {
         <planeGeometry args={[5.2, 4]} />
       </mesh>
       {desks.map((d, i) => (
-        <Desk key={i} position={d.pos} rotationY={d.rot} screen={d.tex} />
+        <Desk key={i} position={d.pos} rotationY={d.rot} kind={d.kind} seed={d.seed} />
       ))}
+      {/* wall screens por departamento: AUTOMATION (este) + IA (oeste) */}
+      <LiveScreen kind="automation" seed={101} size={[1.7, 0.95]} position={[2.27, 3.45, -0.5]} rotation={[0, -Math.PI / 2, 0]} />
+      <LiveScreen kind="ai" seed={202} size={[1.7, 0.95]} position={[-2.27, 3.45, 0.3]} rotation={[0, Math.PI / 2, 0]} />
       {/* tabique de cristal entre filas */}
       <mesh position={[0, 3.4, 0.2]} rotation={[0, 0, 0]} material={receptionMat}>
         <boxGeometry args={[4.8, 0.9, 0.04]} />

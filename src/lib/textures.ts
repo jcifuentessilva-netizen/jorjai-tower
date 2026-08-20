@@ -136,3 +136,99 @@ export function createWoodTexture(seed = 3): THREE.CanvasTexture {
   tex.wrapS = tex.wrapT = THREE.RepeatWrapping
   return tex
 }
+
+const SKIN_TONES = ['#d9a47e', '#b57e5a', '#8d5a3b', '#e8b98f']
+
+/** Rostro humano equirectangular: piel + ojos + cejas + boca (+ barba opcional). */
+export function createFaceTexture(seed = 1): THREE.CanvasTexture {
+  const canvas = document.createElement('canvas')
+  canvas.width = 256
+  canvas.height = 256
+  const ctx = canvas.getContext('2d')!
+
+  let s = seed >>> 0
+  const rand = () => {
+    s = (s * 16807) % 2147483647
+    return s / 2147483647
+  }
+
+  const skin = SKIN_TONES[seed % SKIN_TONES.length]
+  ctx.fillStyle = skin
+  ctx.fillRect(0, 0, 256, 256)
+
+  // sombreado suave del rostro (luz frontal)
+  const grad = ctx.createRadialGradient(128, 108, 30, 128, 128, 120)
+  grad.addColorStop(0, 'rgba(255,255,255,0.10)')
+  grad.addColorStop(1, 'rgba(0,0,0,0.18)')
+  ctx.fillStyle = grad
+  ctx.fillRect(0, 0, 256, 256)
+
+  const ey = 118
+  const eGap = 42
+
+  // ojos: blanco + iris + pupila
+  for (const side of [-1, 1]) {
+    const cx = 128 + side * eGap
+    ctx.fillStyle = '#f4f2ee'
+    ctx.beginPath()
+    ctx.ellipse(cx, ey, 17, 10.5, 0, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.strokeStyle = 'rgba(60,45,35,0.5)'
+    ctx.lineWidth = 1.5
+    ctx.stroke()
+    // iris
+    ctx.fillStyle = rand() > 0.5 ? '#3e4a33' : '#4a3b2a'
+    ctx.beginPath()
+    ctx.arc(cx, ey, 7, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.fillStyle = '#0d0d0d'
+    ctx.beginPath()
+    ctx.arc(cx, ey, 3.4, 0, Math.PI * 2)
+    ctx.fill()
+    // brillo
+    ctx.fillStyle = 'rgba(255,255,255,0.85)'
+    ctx.beginPath()
+    ctx.arc(cx - 2.2, ey - 2.4, 1.6, 0, Math.PI * 2)
+    ctx.fill()
+  }
+
+  // cejas
+  ctx.strokeStyle = 'rgba(40,28,18,0.75)'
+  ctx.lineWidth = 3.2
+  ctx.lineCap = 'round'
+  for (const side of [-1, 1]) {
+    const cx = 128 + side * eGap
+    ctx.beginPath()
+    ctx.moveTo(cx - 12, ey - 18)
+    ctx.quadraticCurveTo(cx, ey - 23, cx + 12, ey - 18)
+    ctx.stroke()
+  }
+
+  // nariz (sombra sutil)
+  ctx.strokeStyle = 'rgba(0,0,0,0.12)'
+  ctx.lineWidth = 2
+  ctx.beginPath()
+  ctx.moveTo(128, ey + 6)
+  ctx.quadraticCurveTo(132, ey + 18, 128, ey + 26)
+  ctx.stroke()
+
+  // boca
+  ctx.strokeStyle = 'rgba(120,60,45,0.85)'
+  ctx.lineWidth = 2.6
+  ctx.beginPath()
+  ctx.moveTo(108, ey + 48)
+  ctx.quadraticCurveTo(128, ey + 56, 148, ey + 48)
+  ctx.stroke()
+
+  // barba / vello opcional
+  if (rand() > 0.55) {
+    ctx.fillStyle = `rgba(45,32,20,${0.18 + rand() * 0.2})`
+    ctx.beginPath()
+    ctx.ellipse(128, ey + 44, 42, 20, 0, 0, Math.PI * 2)
+    ctx.fill()
+  }
+
+  const tex = new THREE.CanvasTexture(canvas)
+  tex.colorSpace = THREE.SRGBColorSpace
+  return tex
+}

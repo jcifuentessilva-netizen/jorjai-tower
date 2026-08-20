@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import { useFrame } from '@react-three/fiber'
+import { createFaceTexture } from '../../lib/textures'
 
 /* ------------------------------------------------------------------ */
 /* Personas procedurales semirealistas (entourage arquitectónico).     */
@@ -40,7 +41,6 @@ const GEO = {
   shoe: new THREE.BoxGeometry(0.1, 0.06, 0.22),
 }
 
-const SKIN = ['#d9a47e', '#b57e5a', '#8d5a3b', '#e8b98f']
 const SHIRTS = ['#e8ece9', '#a7b0aa', '#0B3D25', '#2a2e2c', '#d9d4cc']
 const PANTS = ['#1c2126', '#2c3138', '#3a352e']
 const HAIR = ['#1a1410', '#2b2118', '#0d0d0d', '#4a3a28', '#6b5a44']
@@ -109,19 +109,19 @@ function Person({
   const lForeRef = useRef<THREE.Group>(null)
   const rForeRef = useRef<THREE.Group>(null)
 
-  const skin = useMemo(() => SKIN[seed % SKIN.length], [seed])
   const shirt = useMemo(() => SHIRTS[(seed >> 1) % SHIRTS.length], [seed])
   const pants = useMemo(() => PANTS[(seed >> 2) % PANTS.length], [seed])
   const hair = useMemo(() => HAIR[(seed >> 3) % HAIR.length], [seed])
+  const faceTex = useMemo(() => createFaceTexture(seed), [seed])
 
   const mats = useMemo(
     () => ({
-      skin: new THREE.MeshPhysicalMaterial({ color: skin, roughness: 0.55, clearcoat: 0.15 }),
+      skin: new THREE.MeshStandardMaterial({ map: faceTex, roughness: 0.6 }),
       shirt: new THREE.MeshStandardMaterial({ color: shirt, roughness: 0.85 }),
       pants: new THREE.MeshStandardMaterial({ color: pants, roughness: 0.9 }),
       hair: new THREE.MeshStandardMaterial({ color: hair, roughness: 0.92 }),
     }),
-    [skin, shirt, pants, hair],
+    [faceTex, shirt, pants, hair],
   )
 
   /* registro del rig en el orchestrator */
