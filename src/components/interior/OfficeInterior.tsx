@@ -1,9 +1,11 @@
 import { useMemo } from 'react'
 import * as THREE from 'three'
 import { Text } from '@react-three/drei'
-import { metalMat, floorMat, leatherMat } from '../../lib/materials'
+import { metalMat, carpetMat, leatherMat } from '../../lib/materials'
+import { createCarpetTexture } from '../../lib/textures'
 import LiveScreen from '../ui/LiveScreen'
 import type { ScreenKind } from '../../lib/screens'
+import CityWindow from '../environment/CityWindow'
 
 const isHermesTUI = typeof __HERMES_TUI__ !== 'undefined' && __HERMES_TUI__
 
@@ -99,7 +101,8 @@ function Plant({ position }: { position: [number, number, number] }) {
 /* Interior: lobby (recepción) + oficinas (pisos 2-3)                  */
 /* ================================================================== */
 export default function OfficeInterior() {
-  const floorMat_ = useMemo(() => floorMat('#101613', 0.45), [])
+  const carpetTex = useMemo(() => createCarpetTexture('#c9cdc9', 12), [])
+  const carpet = useMemo(() => carpetMat(carpetTex), [carpetTex])
   const receptionMat = useMemo(() => metalMat('#1a211d', 0.5), [])
   const neonMat = useMemo(
     () =>
@@ -128,9 +131,11 @@ export default function OfficeInterior() {
       <pointLight position={[1.6, 4.55, 0]} intensity={isHermesTUI ? 1.5 : 3} distance={5} color="#ffe6c0" />
 
       {/* ---------- LOBBY ---------- */}
-      <mesh position={[0, 1.11, 0]} rotation={[-Math.PI / 2, 0, 0]} material={floorMat_}>
+      <mesh position={[0, 1.11, 0]} rotation={[-Math.PI / 2, 0, 0]} material={carpet}>
         <planeGeometry args={[5.6, 4.4]} />
       </mesh>
+      {/* ventanal del lobby con vista a Santiago */}
+      <CityWindow position={[0, 1.75, -1.6]} width={2.6} height={1.2} />
       {/* mostrador de recepción */}
       <mesh position={[-1.3, 1.32, -1.15]} material={receptionMat}>
         <boxGeometry args={[2.2, 0.42, 0.55]} />
@@ -155,9 +160,11 @@ export default function OfficeInterior() {
       <Plant position={[-2.1, 1.11, 1.3]} />
 
       {/* ---------- OFICINAS (pisos 2-3) ---------- */}
-      <mesh position={[0, 2.37, 0]} rotation={[-Math.PI / 2, 0, 0]} material={floorMat_}>
+      <mesh position={[0, 2.37, 0]} rotation={[-Math.PI / 2, 0, 0]} material={carpet}>
         <planeGeometry args={[5.2, 4]} />
       </mesh>
+      {/* ventanal de oficinas con vista a Santiago */}
+      <CityWindow position={[0, 3.4, -1.6]} width={2.6} height={1.3} />
       {desks.map((d, i) => (
         <Desk key={i} position={d.pos} rotationY={d.rot} kind={d.kind} seed={d.seed} />
       ))}

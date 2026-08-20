@@ -1,7 +1,9 @@
 import { useMemo } from 'react'
 import * as THREE from 'three'
-import { glassMat, metalMat, leatherMat, floorMat } from '../../lib/materials'
+import { glassMat, metalMat, leatherMat, carpetMat } from '../../lib/materials'
+import { createCarpetTexture } from '../../lib/textures'
 import LiveScreen from '../ui/LiveScreen'
+import CityWindow from '../environment/CityWindow'
 
 const isHermesTUI = typeof __HERMES_TUI__ !== 'undefined' && __HERMES_TUI__
 
@@ -155,7 +157,8 @@ function OrnamentalPlant({ position, scale = 1 }: { position: [number, number, n
 export default function MeetingRoom() {
   const glassTop = useMemo(() => glassMat({ transmission: 0.8, roughness: 0.06 }), [])
   const metal = useMemo(() => metalMat('#1c211e', 0.35), [])
-  const floor = useMemo(() => floorMat('#121614', 0.4), [])
+  const carpetTex = useMemo(() => createCarpetTexture('#cdd2ce', 33), [])
+  const carpet = useMemo(() => carpetMat(carpetTex), [carpetTex])
 
   const chairs: [number, number, number][] = [
     [-0.9, 3.62, 0.78], [0.9, 3.62, 0.78], [-0.9, 3.62, -0.78], [0.9, 3.62, -0.78],
@@ -165,10 +168,12 @@ export default function MeetingRoom() {
 
   return (
     <group>
-      {/* piso */}
-      <mesh position={[0, 3.63, 0]} rotation={[-Math.PI / 2, 0, 0]} material={floor}>
+      {/* piso alfombrado */}
+      <mesh position={[0, 3.63, 0]} rotation={[-Math.PI / 2, 0, 0]} material={carpet}>
         <planeGeometry args={[4.4, 3.2]} />
       </mesh>
+      {/* ventanal con vista a Santiago */}
+      <CityWindow position={[0, 4.25, -1.58]} width={2.2} height={1.2} />
 
       {/* luz central sobre la mesa */}
       <pointLight position={[0, 4.6, 0]} intensity={isHermesTUI ? 2 : 4} distance={6} color="#ffe8c8" />

@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import * as THREE from 'three'
 import { Text } from '@react-three/drei'
-import { createGlowTexture, createWoodTexture } from '../../lib/textures'
-import { woodMat, concreteMat, leatherMat, glassMat, metalMat } from '../../lib/materials'
+import { createGlowTexture, createWoodTexture, createCarpetTexture } from '../../lib/textures'
+import { woodMat, concreteMat, leatherMat, metalMat, carpetMat } from '../../lib/materials'
+import CityWindow from '../environment/CityWindow'
 
 const isHermesTUI = typeof __HERMES_TUI__ !== 'undefined' && __HERMES_TUI__
 
@@ -84,7 +85,8 @@ export default function CreativeStudio() {
   const darkMat = useMemo(() => metalMat('#101412', 0.6), [])
   const cushionMat = useMemo(() => leatherMat('#1d2a23'), [])
   const wallMat = useMemo(() => concreteMat('#111714'), [])
-  const glassWindow = useMemo(() => glassMat({ transmission: 0.85, roughness: 0.06 }), [])
+  const carpetTex = useMemo(() => createCarpetTexture('#c7c4be', 44), [])
+  const carpet = useMemo(() => carpetMat(carpetTex), [carpetTex])
   const neonMat = useMemo(
     () =>
       new THREE.MeshStandardMaterial({
@@ -108,18 +110,13 @@ export default function CreativeStudio() {
 
   return (
     <group>
-      {/* piso del estudio */}
-      <mesh position={[0, 4.87, 0]} rotation={[-Math.PI / 2, 0, 0]} material={darkMat}>
+      {/* piso alfombrado */}
+      <mesh position={[0, 4.87, 0]} rotation={[-Math.PI / 2, 0, 0]} material={carpet}>
         <planeGeometry args={[4.4, 3.2]} />
       </mesh>
 
-      {/* ventanal norte → vista a Santiago (skyline) */}
-      <mesh position={[0, 6.15, -1.62]} material={glassWindow}>
-        <planeGeometry args={[3.4, 2.2]} />
-      </mesh>
-      <mesh position={[0, 6.15, -1.6]} material={darkMat}>
-        <boxGeometry args={[3.5, 0.06, 0.06]} />
-      </mesh>
+      {/* ventanal norte → vista a Santiago */}
+      <CityWindow position={[0, 6.15, -1.6]} width={2.3} height={1.3} />
       {/* luz que entra por el ventanal */}
       <pointLight position={[0, 6.2, -1.2]} intensity={isHermesTUI ? 1.2 : 2.5} distance={6} color="#bfe8d8" />
 

@@ -195,7 +195,7 @@ function Person({
 /* Distribución: 6 estaciones + recepción + estudio creativo           */
 /* ------------------------------------------------------------------ */
 export default function OfficePeople() {
-  const count = isHermesTUI ? 2 : isMobile ? 4 : 12
+  const count = isHermesTUI ? 2 : isMobile ? 4 : 14
 
   const placements = useMemo(() => {
     const all: { pos: [number, number, number]; rot: number; mode: Mode; seed: number; height?: number }[] = [
@@ -208,13 +208,16 @@ export default function OfficePeople() {
       { pos: [1.5, 2.37, 1.32], rot: Math.PI, mode: 'typing', seed: 21 },
       // lobby: recepcionista de pie tras el mostrador
       { pos: [-1.3, 1.11, -1.5], rot: 0, mode: 'standing', seed: 25, height: 0.95 },
-      // estudio creativo: 2 conversando junto a la mesa
-      { pos: [-0.8, 4.87, 1.35], rot: -0.5, mode: 'standing', seed: 29 },
-      { pos: [0.85, 4.87, 1.4], rot: 2.7, mode: 'standing', seed: 33 },
+      // estudio creativo (piso 6): 2 conversando junto a la mesa
+      { pos: [-0.8, 6.12, 1.35], rot: -0.5, mode: 'standing', seed: 29 },
+      { pos: [0.85, 6.12, 1.4], rot: 2.7, mode: 'standing', seed: 33 },
       // sala de reuniones (piso 4): ejecutivos en la mesa
       { pos: [-0.9, 3.62, 0.78], rot: Math.PI, mode: 'meeting', seed: 37 },
       { pos: [0.9, 3.62, 0.78], rot: Math.PI, mode: 'meeting', seed: 41 },
       { pos: [1.62, 3.62, 0], rot: -Math.PI / 2, mode: 'meeting', seed: 45 },
+      // lounge (piso 5): descanso en los sofás
+      { pos: [-0.85, 4.88, 1.1], rot: 0.15, mode: 'looking', seed: 49 },
+      { pos: [0.9, 4.88, 1.05], rot: -0.2, mode: 'looking', seed: 53 },
     ]
     return all.slice(0, count)
   }, [count])

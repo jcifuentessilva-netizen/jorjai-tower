@@ -96,3 +96,25 @@ export function concreteMat(color = '#191c1b'): THREE.MeshStandardMaterial {
     envMapIntensity: 0.4,
   })
 }
+
+/** Alfombra clara de oficina con textura de tejido. */
+export function carpetMat(map: THREE.Texture): THREE.MeshStandardMaterial {
+  return new THREE.MeshStandardMaterial({
+    map,
+    roughness: 0.95,
+    metalness: 0,
+    envMapIntensity: 0.25,
+  })
+}
+
+/** Tela de sofá/sillón con textura tweed. */
+export function fabricMat(map: THREE.Texture, color = '#8a8f8c'): THREE.MeshPhysicalMaterial {
+  return new THREE.MeshPhysicalMaterial({
+    map,
+    color,
+    roughness: 0.85,
+    metalness: 0,
+    clearcoat: 0.06,
+    envMapIntensity: 0.4,
+  })
+}
