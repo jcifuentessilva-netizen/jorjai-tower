@@ -1,32 +1,67 @@
-# React + TypeScript + Vite
+# 🏢 JORJAI Tower — Web Inmersiva 3D
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+**"Dar átomos a la IA"** · JORJAI Digitalizaciones · Fundadores: Jordan + Jaime · Puente Alto, Santiago
 
-Currently, two official plugins are available:
+Web corporativa interactiva en 3D: una torre de 6 pisos que se recorre con scroll — lobby, oficinas con gente trabajando, sala de reuniones, esparcimiento, estudio creativo y plaza con logo en relieve.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🌍 En vivo
 
-## React Compiler
+**https://jcifuentessilva-netizen.github.io/jorjai-tower/** (GitHub Pages, rama `gh-pages`)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🏗 Stack
 
-## Expanding the Oxlint configuration
+- Vite 8 · React 19 · TypeScript
+- three.js · @react-three/fiber 9 · @react-three/drei · @react-three/postprocessing
+- GSAP + Lenis (scroll cinematográfico) · Tailwind CSS 3.4
+- pnpm
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+## 🚀 Desarrollo
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+pnpm install
+pnpm dev        # http://localhost:5174
+pnpm build      # dist/ (base relativa './')
+pnpm preview    # http://localhost:4173
+pnpm lint       # oxlint
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## 🏢 Recorrido (11 fases de scroll)
+
+1. **Apertura** — torre nocturna, logo, concepto
+2. **Presentación** — exterior (fachada de foto real)
+3. **Lobby** — cámara dentro del edificio: logo neón, recepción, ventanal con vista de Santiago
+4. **Oficinas** — 6 estaciones, personas con rostros tecleando, pantallas vivas (code/sales/clients/automation/ai/metrics)
+5. **Sala de reuniones** — mesa vidrio, sillas reclinables, proyector con gráfico verde, pizarra UX
+6. **Esparcimiento** — sofás tweed, ping-pong, futbolito, máquina de bebidas
+7. **Estudio creativo** — mural del brief, lápices, tablet, cámara
+8-10. **Valores · Datos · Conversión** — exterior y plaza: logo relieve, flores, bancas, faroles, repartidor en bici
+11. **Cierre** — rooftop
+
+## 📦 Deploy (GitHub Pages)
+
+```bash
+pnpm build
+git worktree add <tmp> gh-pages && cd <tmp> \
+  && git rm -rf . && cp -r <proyecto>/dist/* . \
+  && git add -A && git commit -m deploy && git push origin gh-pages
+```
+
+## 🎨 Identidad
+
+Paleta `#050505 #0B3D25 #42D879 #F4F7F4 #A7B0AA` · Space Grotesk + Inter · CTA WhatsApp `wa.me/56966101914`
+
+## 📁 Estructura
+
+```
+src/
+├── App.tsx                    # Canvas + postprocessing + lazy
+├── lib/                       # xMachine (fases), materiales PBR, texturas, pantallas
+├── components/
+│   ├── protagonist/           # JorjaiTower (torre 4.6×3.4×7.5, 6 pisos)
+│   ├── interior/              # Lobby, Oficinas, Sala, Lounge, Estudio
+│   ├── environment/           # Skyline, Plaza, CityWindow, ChileMap
+│   ├── people/                # Personas procedurales con rostros
+│   ├── props/                 # Microdetalle (tazas, briefs, laptops...)
+│   ├── camera/ atmosphere/ ui/
+└── hooks/                     # useScrollController (Lenis+ScrollTrigger)
+```
